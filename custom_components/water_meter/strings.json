@@ -1,0 +1,54 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up Water Meter",
+        "description": "Enter the details of your water meter device.",
+        "data": {
+          "host": "IP Address or Hostname",
+          "scan_interval": "Polling interval (seconds)"
+        },
+        "data_description": {
+          "host": "The IP address or hostname of your water meter (e.g. 10.27.3.86)",
+          "scan_interval": "How often to poll the device for new readings (minimum 1 second)"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure Water Meter",
+        "description": "Update the connection details for your water meter.",
+        "data": {
+          "host": "IP Address or Hostname",
+          "scan_interval": "Polling interval (seconds)"
+        },
+        "data_description": {
+          "host": "The IP address or hostname of your water meter (e.g. 10.27.3.86)",
+          "scan_interval": "How often to poll the device for new readings (minimum 1 second)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to connect to the water meter. Check the IP address and that the device is reachable.",
+      "invalid_response": "Connected but the response doesn't look like water meter metrics. Check the endpoint path.",
+      "unknown": "An unexpected error occurred. Check the logs for details."
+    },
+    "abort": {
+      "already_configured": "This water meter is already configured.",
+      "reconfigure_successful": "Re-configuration was successful."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configure Water Meter",
+        "data": {
+          "host": "IP Address or Hostname",
+          "scan_interval": "Polling interval (seconds)"
+        },
+        "data_description": {
+          "host": "The IP address or hostname of your water meter (e.g. 10.27.3.86)",
+          "scan_interval": "How often to poll the device for new readings (minimum 1 second)"
+        }
+      }
+    }
+  }
+}
