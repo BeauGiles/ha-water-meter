@@ -23,7 +23,7 @@ water_today_litres 0.00
 water_flowrate_lpm 0.00
 ```
 
-For example - https://gist.github.com/Tugzrida/2c9fcf52571909cf60cbafc32413daf0 by [Cameron])(https://tugzrida.xyz)
+For example - https://gist.github.com/Tugzrida/2c9fcf52571909cf60cbafc32413daf0 by [Cameron / Tugzrida](https://tugzrida.xyz)
 
 ## Installation
 
