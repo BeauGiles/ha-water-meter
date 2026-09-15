@@ -49,9 +49,7 @@ class WaterMeterCoordinator(DataUpdateCoordinator):
                 try:
                     result[name] = float(raw_value)
                 except ValueError:
-                    _LOGGER.warning(
-                        "Could not parse value for metric '%s': %s", name, raw_value
-                    )
+                    _LOGGER.warning("Could not parse value for metric '%s': %s", name, raw_value)
                     result[name] = None
         return result
 
@@ -73,10 +71,6 @@ class WaterMeterCoordinator(DataUpdateCoordinator):
                 "water_flowrate_lpm": metrics.get("water_flowrate_lpm"),
             }
         except (aiohttp.ClientError, TimeoutError) as err:
-            raise UpdateFailed(
-                f"Error communicating with water meter at {self.url}: {err}"
-            ) from err
+            raise UpdateFailed(f"Error communicating with water meter at {self.url}: {err}") from err
         except Exception as err:
-            raise UpdateFailed(
-                f"Unexpected error fetching water meter data: {err}"
-            ) from err
+            raise UpdateFailed(f"Unexpected error fetching water meter data: {err}") from err
