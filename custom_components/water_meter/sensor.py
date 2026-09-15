@@ -41,6 +41,7 @@ SENSOR_DESCRIPTIONS: tuple[WaterMeterSensorDescription, ...] = (
         data_key="water_flowrate_lpm",
         name="Water Flow Rate",
         native_unit_of_measurement="L/min",
+        device_class=SensorDeviceClass.VOLUME_FLOW_RATE,
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:water",
         legacy_entity_id="sensor.water_flow_rate",
@@ -214,7 +215,9 @@ class WaterMeterTodaySensor(_AccumulatorSensor):
                 except ValueError:
                     pass
 
-        # Fallback: derive last_date from last_changed timestamp on the state
+        # Fallback: derive last_date from the last_changed timestamp on the state.
+        # This covers the case where extra data was written but last_date was missing
+        # (e.g. after an upgrade from a version that didn't store it).
         if last_date is None:
             if (last_state := await self.async_get_last_state()) is not None:
                 if last_state.last_changed is not None:

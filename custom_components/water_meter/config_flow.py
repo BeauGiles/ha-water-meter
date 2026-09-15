@@ -116,6 +116,7 @@ class WaterMeterConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 _LOGGER.exception("Unexpected error connecting to water meter")
                 errors["base"] = "unknown"
             else:
+                # Saves new values, reloads the integration, and closes the flow
                 return self.async_update_reload_and_abort(
                     current,
                     title=f"Water Meter ({host})",

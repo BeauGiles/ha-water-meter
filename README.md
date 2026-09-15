@@ -1,5 +1,9 @@
 # Water Meter — Home Assistant Integration
 
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
+[![GitHub release](https://img.shields.io/github/release/BeauGiles/ha-water-meter.svg)](https://github.com/BeauGiles/ha-water-meter/releases)
+[![Validate](https://github.com/BeauGiles/ha-water-meter/actions/workflows/validate.yml/badge.svg)](https://github.com/BeauGiles/ha-water-meter/actions/workflows/validate.yml)
+
 A Home Assistant custom integration for a locally hosted water meter that exposes a [Prometheus exposition format](https://prometheus.io/docs/instrumenting/exposition_formats/) endpoint. Provides real-time flow rate, daily usage, and a cumulative lifetime total compatible with the [Energy Dashboard](https://www.home-assistant.io/docs/energy/water/).
 
 ## Sensors
@@ -23,7 +27,7 @@ water_today_litres 0.00
 water_flowrate_lpm 0.00
 ```
 
-For example - https://gist.github.com/Tugzrida/2c9fcf52571909cf60cbafc32413daf0 by [Cameron / Tugzrida](https://tugzrida.xyz)
+For example — https://gist.github.com/Tugzrida/2c9fcf52571909cf60cbafc32413daf0 by [Cameron / Tugzrida](https://tugzrida.xyz)
 
 ## Installation
 
