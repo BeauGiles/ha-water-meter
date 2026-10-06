@@ -1,3 +1,5 @@
+# Runs HACS and Home Assistant validation on repository changes.
+
 name: Validate Home Assistant Integration
 
 on:
