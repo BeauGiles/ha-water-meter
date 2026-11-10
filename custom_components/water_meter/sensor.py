@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 from typing import Any
 
 from homeassistant.components.sensor import (
@@ -17,7 +17,7 @@ from homeassistant.const import UnitOfVolume
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.restore_state import RestoreEntity
+from homeassistant.helpers.restore_state import ExtraStoredData, RestoreEntity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import dt as dt_util
 
@@ -25,6 +25,21 @@ from .const import CONF_HOST, DOMAIN
 from .coordinator import WaterMeterCoordinator
 
 _LOGGER = logging.getLogger(__name__)
+
+
+# How long after local midnight HA still assumes the meter's own daily reset
+# may not have happened yet (HA and the meter clocks differ by a few seconds).
+MIDNIGHT_GRACE = timedelta(minutes=5)
+
+
+class _AccumulatorExtraData(ExtraStoredData):
+    """Persisted accumulator state (survives restarts, even while unavailable)."""
+
+    def __init__(self, data: dict[str, Any]) -> None:
+        self._data = data
+
+    def as_dict(self) -> dict[str, Any]:
+        return self._data
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -168,6 +183,11 @@ class _AccumulatorSensor(
             "last_device_value": self._last_device_value,
         }
 
+    @property
+    def extra_restore_state_data(self) -> ExtraStoredData:
+        """Data saved for restore; independent of availability."""
+        return _AccumulatorExtraData(dict(self.extra_state_attributes))
+
     def _handle_coordinator_update(self) -> None:
         if not self._restored or self.coordinator.data is None:
             return
@@ -252,12 +272,24 @@ class WaterMeterTodaySensor(_AccumulatorSensor):
             self._total = current
 
         elif today != self._last_date:
-            # Date changed in HA's timezone — genuine midnight reset
-            _LOGGER.debug(
-                "%s: midnight reset (%s -> %s), starting fresh at %.2f L",
-                self.entity_id, self._last_date, today, current,
-            )
-            self._total = current
+            # Date changed in HA's timezone — midnight reset.
+            # HA's clock can tick over a few seconds before the meter resets
+            # itself, so don't trust a not-yet-reset device value as new usage.
+            since_midnight = dt_util.now() - dt_util.start_of_local_day()
+            if current >= self._last_device_value and since_midnight <= MIDNIGHT_GRACE:
+                _LOGGER.debug(
+                    "%s: midnight reset (%s -> %s), device not yet reset "
+                    "(%.2f L), starting at 0",
+                    self.entity_id, self._last_date, today, current,
+                )
+                self._total = 0.0
+            else:
+                _LOGGER.debug(
+                    "%s: midnight reset (%s -> %s), device already reset, "
+                    "starting at %.2f L",
+                    self.entity_id, self._last_date, today, current,
+                )
+                self._total = current
 
         else:
             # Same calendar day — date is the ONLY reset signal.
